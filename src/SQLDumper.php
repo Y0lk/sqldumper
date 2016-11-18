@@ -1,6 +1,8 @@
 <?php
 namespace Y0lk\SQLDumper;
 
+use PDO;
+
 class SQLDumper
 {
     protected $host = '';
@@ -18,6 +20,10 @@ class SQLDumper
         $this->dbname = $dbname;
         $this->username = $username;
         $this->password = $password;
+
+        //Init main TableDumperCollection
+        $this->listTableDumpers = new TableDumperCollection;
+        $this->connect();
     }
 
     protected function connect() 
@@ -29,23 +35,16 @@ class SQLDumper
                                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
                             ]
         );
-
-        //Init main TableDumperCollection
-        $this->listTableDumpers = new TableDumperCollection;
     }
 
-    public function table($tableName)
+    public function table($table)
     {
-        return $this->listTableDumpers->table($tableName);
+        return $this->listTableDumpers->addTable($table);
     }
 
-    public function listTables(...$listTableNames)
-    {
-        //Create TableDumper collection
-        $listDumpers = new TableDumperCollection;
-        $listDumpers->listTables($listTableNames);
-
-        return $listDumpers;
+    public function listTables($listTables)
+    {   
+        return $this->listTableDumpers->addListTables($listTables);
     }
 
     public function allTables()
@@ -59,13 +58,34 @@ class SQLDumper
         $stmt->closeCursor();
 
         //Call list tables with returned table names
-        $listDumpers = call_user_func_array([$this, 'listTables'], $lsitRows);
+        $listDumpers = $this->listTables($listRows);
 
         return $listDumpers;
     }
 
     public function save($filename) 
     {
+        $stream = fopen($filename, 'w');
+        $this->dump($stream);
+        fclose($stream);
+    }
 
+    public function stdout()
+    {
+        $stream = fopen('php://stdout', 'w');
+        $this->dump($stream);
+        fclose($stream);
+    }
+
+    protected function dump($stream)
+    {
+        //TODO: Find a way to not use that an instead execute all foreign key constraints at the end
+        fwrite($stream, "SET FOREIGN_KEY_CHECKS=0;\r\n");
+
+        foreach ($this->listTableDumpers as $tableDumper) {
+            $tableDumper->dump($this->db, $stream);
+        }
+
+        fwrite($stream, "SET FOREIGN_KEY_CHECKS=1;\r\n");
     }
 }
