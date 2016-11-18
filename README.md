@@ -1,5 +1,10 @@
 # SQLDumper
 
+[![Latest Stable Version](https://img.shields.io/packagist/v/y0lk/sqldumper.svg)](https://packagist.org/packages/y0lk/sqldumper)
+[![Build Status](https://img.shields.io/travis/Y0lk/sqldumper.svg)](https://travis-ci.org/Y0lk/sqldumper)
+[![License](https://img.shields.io/packagist/l/y0lk/sqldumper.svg)](https://github.com/y0lk/sqldumper/blob/master/LICENSE)
+[![Total Downloads](https://img.shields.io/packagist/dt/y0lk/sqldumper.svg?maxAge=2592000)](https://packagist.org/packages/y0lk/sqldumper)
+
 SQLDumper is a small library designed to easily create customized SQL dumps.
 
 ## Installation
