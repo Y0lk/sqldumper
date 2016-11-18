@@ -2,6 +2,7 @@
 
 [![Latest Stable Version](https://img.shields.io/packagist/v/y0lk/sqldumper.svg)](https://packagist.org/packages/y0lk/sqldumper)
 [![Build Status](https://img.shields.io/travis/Y0lk/sqldumper.svg)](https://travis-ci.org/Y0lk/sqldumper)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Y0lk/sqldumper/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Y0lk/sqldumper/?branch=master)
 [![License](https://img.shields.io/packagist/l/y0lk/sqldumper.svg)](https://github.com/y0lk/sqldumper/blob/master/LICENSE)
 [![Total Downloads](https://img.shields.io/packagist/dt/y0lk/sqldumper.svg?maxAge=2592000)](https://packagist.org/packages/y0lk/sqldumper)
 
