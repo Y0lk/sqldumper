@@ -3,8 +3,17 @@ namespace Y0lk\SQLDumper;
 
 use ArrayObject;
 
+/**
+ * A TableDumperCollection is used to group TableDumper objects together, allowing you to specify dump options on multiple table at once. 
+ * All TableDumper methods can be called directly on a TableDumperCollection, and will be executed on all the TableDumper instances in that collection.
+ *
+ * @author Gabriel Jean <gabriel@inkrebit.com>
+ */
 class TableDumperCollection extends ArrayObject 
 {
+    /**
+     * {@inheritDoc}
+     */
     public function append($value)
     {
         //Make sure we're adding a TableDumper object
@@ -16,6 +25,12 @@ class TableDumperCollection extends ArrayObject
         return $this->offsetSet($value->getTable()->getName(), $value);
     }
 
+
+    /**
+     * @param Table|string  Adds a table, either by name, or by Table instance, to the collection
+     *
+     * @return TableDumper Retruns a TableDumper of the table that was just added
+     */
     public function addTable($table)
     {  
         if($table instanceof Table) {
@@ -36,6 +51,12 @@ class TableDumperCollection extends ArrayObject
         return $this->offsetGet($tableName);
     }
 
+
+    /**
+     * @param TableDumperCollection|array<TableDumper|Table|string>    Adds a list of tables, either by passing TableDumperCollection, or an array containing either TableDumper objects, Table objects or table names
+     *
+     * @return TableDumperCollection Returns a TableDumperCollection of the list of tables that was just added
+     */
     public function addListTables($listTables)
     {
         //If arg is a TableDumperCollection, merge into this one
@@ -62,11 +83,11 @@ class TableDumperCollection extends ArrayObject
 
             return $listDumpers;
         }
-        else {
-            throw new \Exception("Invalid value supplied for argument 'listTables'", 1);
-            return NULL;
-        }
+
+        throw new \Exception("Invalid value supplied for argument 'listTables'", 1);
+        return NULL;
     }
+
 
     public function __call($name, $arguments)
     {

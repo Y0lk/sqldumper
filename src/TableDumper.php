@@ -3,50 +3,112 @@ namespace Y0lk\SQLDumper;
 
 use PDO;
 
+/**
+ * A TableDumper instance is used to dump a single Table, allowing you to specify certain dump options for this table only
+ *
+ * @author Gabriel Jean <gabriel@inkrebit.com>
+ */
 class TableDumper {
-    protected $db;
 
+    /**
+     * @var Table   Table instance related to this dumper
+     */
     protected $table;
 
+    /**
+     * @var boolean Specifies whether to include the table's structure (CREATE statement)
+     */
     protected $withStructure = true;
+
+    /**
+     * @var boolean Specifies whether to include the table's data (INSERT statements)
+     */
     protected $withData = true;
 
+    /**
+     * @var boolean Specifies whether to include a DROP TABLE statement
+     */
     protected $withDrop = true;
 
+
+    /**
+     * @param Table Table this dumper will be used for
+     */
     public function __construct(Table $table)
     {
         $this->table = $table;
     }
 
+    /**
+     * Specifies whether to include the table's structure (CREATE statement)
+     * 
+     * @param  boolean  $withStructure  TRUE to include structure, FALSE otherwise
+     * 
+     * @return TableDumper  Returns the TableDumper instance
+     */
     public function withStructure($withStructure = true)
     {
         $this->withStructure = $withStructure;
         return $this;
     }
 
+    /**
+     * Specifies whether to include the table's data (INSERT statements)
+     * 
+     * @param  boolean  $withData   TRUE to include data, FALSE otherwise
+     * 
+     * @return TableDumper  Returns the TableDumper instance
+     */
     public function withData($withData = true)
     {
         $this->withData = $withData;
         return $this;
     }
 
+    /**
+     * Specifies whether to include a DROP TABLE statement
+     * 
+     * @param  boolean  $withDrop   TRUE to include DROP statement, FALSE otherwise
+     * 
+     * @return TableDumper  Returns the TableDumper instance
+     */
     public function withDrop($withDrop = true)
     {
         $this->withDrop = $withDrop;
         return $this;
     }
 
+    /**
+     * Add WHERE parameters to use when dumping the data 
+     * 
+     * @param  string   $where_string   SQL string that you would normally write after WHERE keyowrd
+     * 
+     * @return TableDumper  Returns the TableDumper instance
+     */
     public function where($where_string)
     {
         $this->where = $where_string;
         return $this;
     }
 
+    /**
+     * Get the Table related to this dumper
+     * 
+     * @return Table    Returns the Table instance
+     */
     protected function getTable()
     {
         return $this->table;
     }
 
+    /**
+     * Writes the CREATE statement to the dump stream
+     * 
+     * @param  PDO      $db     PDO instance to use for DB queries
+     * @param  resource $stream Stream to write the dump to
+     * 
+     * @return void
+     */
     protected function dumpCreateStatement(PDO $db, $stream) 
     {
         $stmt = $db->query('SHOW CREATE TABLE `'.$this->table->getName().'`');
@@ -56,11 +118,27 @@ class TableDumper {
         $stmt->closeCursor();
     }
 
+    /**
+     * Writes the DROP statement to the drump stream
+     * 
+     * @param  PDO      $db     PDO instance to use for DB queries
+     * @param  resource $stream Stream to write the dump to
+     * 
+     * @return void
+     */
     protected function dumpDropStatement(PDO $db, $stream)
     {
         fwrite($stream, 'DROP TABLE IF EXISTS `'.$this->table->getName(). "`;\r\n");
     }
 
+    /**
+     * Writes the INSERT statements to the drump stream
+     * 
+     * @param  PDO      $db     PDO instance to use for DB queries
+     * @param  resource $stream Stream to write the dump to
+     * 
+     * @return void
+     */
     protected function dumpInsertStatement(PDO $db, $stream)
     {
         //Get data from table
@@ -127,6 +205,14 @@ class TableDumper {
         }
     }
 
+    /**
+     * Writes all the SQL statements of this dumper to the dump stream
+     * 
+     * @param  PDO      $db     PDO instance to use for DB queries
+     * @param  resource $stream Stream to write the dump to
+     * 
+     * @return void
+     */
     public function dump(PDO $db, $stream)
     {
         //Drop table statement
