@@ -17,7 +17,7 @@ class TableDumperCollection extends ArrayObject
     public function append($value)
     {
         //Make sure we're adding a TableDumper object
-        if(!($value instanceof TableDumper)) {
+        if (!($value instanceof TableDumper)) {
             throw new \Exception("TableDumperCollection only accepts TableDumper objects", 1);
         }
 
@@ -33,16 +33,16 @@ class TableDumperCollection extends ArrayObject
      */
     public function addTable($table)
     {  
-        if($table instanceof Table) {
+        if ($table instanceof Table) {
             $tableName = $table->getName();
-        } elseif(is_string($table)) {
+        } elseif (is_string($table)) {
             $tableName = $table;
         } else {
             throw new \Exception("Invalid value supplied for argument 'table'", 1);
         }
 
         //First check if a dumper already exists for this table
-        if(!$this->offsetExists($tableName)) {
+        if (!$this->offsetExists($tableName)) {
             //Create new one
             $table = new Table($tableName);
             $this->offsetSet($tableName, new TableDumper($table));
@@ -60,20 +60,20 @@ class TableDumperCollection extends ArrayObject
     public function addListTables($listTables)
     {
         //If arg is a TableDumperCollection, merge into this one
-        if($listTables instanceof TableDumperCollection) {
+        if ($listTables instanceof TableDumperCollection) {
             foreach ($listTables as $table) {
                 $this->append($table);
             }
 
             return $listTables;
         } 
-        elseif(is_array($listTables)) {
+        elseif (is_array($listTables)) {
             //Create TableDumperCollection 
             $listDumpers = new TableDumperCollection;
 
             foreach ($listTables as $table) {
                 //If table is already a Dumper, simply append to this
-                if($table instanceof TableDumper) {
+                if ($table instanceof TableDumper) {
                     $listDumpers[] = $table;
                     $this->append($table);
                 } else {

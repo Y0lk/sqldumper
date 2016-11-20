@@ -128,7 +128,7 @@ class TableDumper {
      */
     protected function dumpDropStatement(PDO $db, $stream)
     {
-        fwrite($stream, 'DROP TABLE IF EXISTS `'.$this->table->getName(). "`;\r\n");
+        fwrite($stream, 'DROP TABLE IF EXISTS `'.$this->table->getName()."`;\r\n");
     }
 
     /**
@@ -144,7 +144,7 @@ class TableDumper {
         //Get data from table
         $select = 'SELECT * FROM '.$this->table->getName();
 
-        if(!empty($this->where)) {
+        if (!empty($this->where)) {
             $select .= ' WHERE '.$this->where;
         }
 
@@ -163,9 +163,9 @@ class TableDumper {
             $stmt->bindValue(':offset', $i*$limit, PDO::PARAM_INT);
             $stmt->execute();
 
-            while(($row = $stmt->fetch(PDO::FETCH_ASSOC)) !== false) {
+            while (($row = $stmt->fetch(PDO::FETCH_ASSOC)) !== false) {
                 //Write start of INSERT statement
-                if($j === 0) {
+                if ($j === 0) {
                     //Gets keys from array indexes of first row
                     $fields = implode(',', array_keys($row));
                     
@@ -175,16 +175,16 @@ class TableDumper {
                 //Write values of this row
                 $valuesDump = '';
 
-                if($j > 0) {
+                if ($j > 0) {
                     $valuesDump .= ", \r\n";
                 }
 
                 $listValues = array_values($row);
 
                 //Quote values or replace with NULL if null
-                foreach($listValues as $key => $value) {
+                foreach ($listValues as $key => $value) {
                     $quotedValue = str_replace("'", "\'", str_replace('"', '\"', $value));
-                    $listValues[$key] = (!isset($value) ? 'NULL' : "'" . $quotedValue."'") ;
+                    $listValues[$key] = (!isset($value) ? 'NULL' : "'".$quotedValue."'");
                 }
 
                 //Add values from this row to valuesDump
@@ -197,10 +197,10 @@ class TableDumper {
             $stmt->closeCursor();
             $i++;
 
-        } while($j === $i*$limit);
+        } while ($j === $i*$limit);
 
         //If there was at least one row, write end of INSERT statement
-        if($j > 0) {
+        if ($j > 0) {
             fwrite($stream, ";\r\n");
         }
     }
@@ -216,17 +216,17 @@ class TableDumper {
     public function dump(PDO $db, $stream)
     {
         //Drop table statement
-        if($this->withDrop) {
+        if ($this->withDrop) {
             $this->dumpDropStatement($db, $stream);
         }
 
         //Create table statement
-        if($this->withStructure) {
+        if ($this->withStructure) {
             $this->dumpCreateStatement($db, $stream);
         }
 
         //Data
-        if($this->withData) {
+        if ($this->withData) {
             $this->dumpInsertStatement($db, $stream);
         }
     }
