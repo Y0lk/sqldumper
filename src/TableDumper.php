@@ -79,6 +79,39 @@ class TableDumper {
     }
 
     /**
+     * Returns whether or not this dumper will include the table's structure
+     * 
+     * @return boolean Returns TRUE if it includes it, FALSE otherwise
+     */
+    public function hasStructure()
+    {
+        return $this->withStructure;
+    }
+
+
+    /**
+     * Returns whether or not this dumper will include the table's data
+     * 
+     * @return boolean Returns TRUE if it includes it, FALSE otherwise
+     */
+    public function hasData()
+    {
+        return $this->withData;
+    }
+
+
+    /**
+     * Returns whether or not this dumper will include the table's DROP statement
+     * 
+     * @return boolean Returns TRUE if it includes it, FALSE otherwise
+     */
+    public function hasDrop()
+    {
+        return $this->withDrop;
+    }
+
+
+    /**
      * Add WHERE parameters to use when dumping the data 
      * 
      * @param  string   $where_string   SQL string that you would normally write after WHERE keyowrd
@@ -92,11 +125,20 @@ class TableDumper {
     }
 
     /**
+     * Get the where param string
+     * @return string Returns the WHERE param string
+     */
+    public function getWhere()
+    {
+        return $this->where;
+    }
+
+    /**
      * Get the Table related to this dumper
      * 
      * @return Table    Returns the Table instance
      */
-    protected function getTable()
+    public function getTable()
     {
         return $this->table;
     }

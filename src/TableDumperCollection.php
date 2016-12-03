@@ -25,6 +25,20 @@ class TableDumperCollection extends ArrayObject
         return $this->offsetSet($value->getTable()->getName(), $value);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public function offsetSet($index, $newval)
+    {
+        //Make sure we're adding a TableDumper object
+        if (!($newval instanceof TableDumper)) {
+            throw new \Exception("TableDumperCollection only accepts TableDumper objects", 1);
+        }
+
+        //Append with table_name as key
+        return parent::offsetSet($newval->getTable()->getName(), $newval);
+    }
+
 
     /**
      * @param Table|string  Adds a table, either by name, or by Table instance, to the collection
@@ -85,7 +99,6 @@ class TableDumperCollection extends ArrayObject
         }
 
         throw new \Exception("Invalid value supplied for argument 'listTables'", 1);
-        return NULL;
     }
 
 
