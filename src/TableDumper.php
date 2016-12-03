@@ -30,6 +30,11 @@ class TableDumper {
      */
     protected $withDrop = true;
 
+    /**
+     * @var string WHERE parameters written as a regular SQL string to select specific data from this table
+     */
+    protected $where = '';
+
 
     /**
      * @param Table Table this dumper will be used for
@@ -163,12 +168,11 @@ class TableDumper {
     /**
      * Writes the DROP statement to the drump stream
      * 
-     * @param  PDO      $db     PDO instance to use for DB queries
      * @param  resource $stream Stream to write the dump to
      * 
      * @return void
      */
-    protected function dumpDropStatement(PDO $db, $stream)
+    protected function dumpDropStatement($stream)
     {
         fwrite($stream, 'DROP TABLE IF EXISTS `'.$this->table->getName()."`;\r\n");
     }
@@ -259,7 +263,7 @@ class TableDumper {
     {
         //Drop table statement
         if ($this->withDrop) {
-            $this->dumpDropStatement($db, $stream);
+            $this->dumpDropStatement($stream);
         }
 
         //Create table statement
