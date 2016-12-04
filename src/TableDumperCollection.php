@@ -80,8 +80,7 @@ class TableDumperCollection extends ArrayObject
             }
 
             return $listTables;
-        } 
-        elseif (is_array($listTables)) {
+        } elseif (is_array($listTables)) {
             //Create TableDumperCollection 
             $listDumpers = new TableDumperCollection;
 
