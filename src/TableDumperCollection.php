@@ -51,14 +51,14 @@ class TableDumperCollection extends ArrayObject
             $tableName = $table->getName();
         } elseif (is_string($table)) {
             $tableName = $table;
+            $table = new Table($tableName);
         } else {
             throw new \Exception("Invalid value supplied for argument 'table'", 1);
         }
 
         //First check if a dumper already exists for this table
         if (!$this->offsetExists($tableName)) {
-            //Create new one
-            $table = new Table($tableName);
+            //Create new one 
             $this->offsetSet($tableName, new TableDumper($table));
         }
 

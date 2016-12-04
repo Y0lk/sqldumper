@@ -76,6 +76,16 @@ class SQLDumper
     }
 
     /**
+     * Get the main list of TableDumper
+     * 
+     * @return TableDumperCollection Returns the list of table dumpers as TableDumperCollection
+     */
+    public function getListTableDumpers()
+    {
+        return $this->listTableDumpers;
+    }
+
+    /**
      * Set a TableDumper for the given table in order to specify certain dump options on it
      * 
      * @param  Table|string The table to set
@@ -121,6 +131,25 @@ class SQLDumper
     }
 
     /**
+     * Writes the complete dump of the database to the given stream
+     * 
+     * @param  resource Stream to write to
+     * 
+     * @return void
+     */
+    public function dump($stream)
+    {
+        //TODO: Find a way to not use that an instead execute all foreign key constraints at the end
+        fwrite($stream, "SET FOREIGN_KEY_CHECKS=0;\r\n");
+
+        foreach ($this->listTableDumpers as $tableDumper) {
+            $tableDumper->dump($this->db, $stream);
+        }
+
+        fwrite($stream, "SET FOREIGN_KEY_CHECKS=1;\r\n");
+    }
+
+    /**
      * Creates and saves the dump to a file
      * 
      * @param  string   File name for the dump
@@ -132,36 +161,5 @@ class SQLDumper
         $stream = fopen($filename, 'w');
         $this->dump($stream);
         fclose($stream);
-    }
-
-    /**
-     * Creates and prints the dump to stdout (useful for CLI tests)
-     * 
-     * @return void
-     */
-    public function stdout()
-    {
-        $stream = fopen('php://stdout', 'w');
-        $this->dump($stream);
-        fclose($stream);
-    }
-
-    /**
-     * Writes the complete dump of the database to the given stream
-     * 
-     * @param  resource Stream to write to
-     * 
-     * @return void
-     */
-    protected function dump($stream)
-    {
-        //TODO: Find a way to not use that an instead execute all foreign key constraints at the end
-        fwrite($stream, "SET FOREIGN_KEY_CHECKS=0;\r\n");
-
-        foreach ($this->listTableDumpers as $tableDumper) {
-            $tableDumper->dump($this->db, $stream);
-        }
-
-        fwrite($stream, "SET FOREIGN_KEY_CHECKS=1;\r\n");
     }
 }

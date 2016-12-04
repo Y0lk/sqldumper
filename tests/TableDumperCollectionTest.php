@@ -62,7 +62,7 @@ class TableDumperCollectionTest extends \PHPUnit_Framework_TestCase
     	$listTableDumpers->addTable($table);
 
     	$this->assertInstanceOf(TableDumper::class, $listTableDumpers['table_name']);
-    	$this->assertEquals($listTableDumpers['table_name']->getTable()->getName(), 'table_name');
+    	$this->assertSame($listTableDumpers['table_name']->getTable(), $table);
     }
 
     public function testAddTableWrongValue()
@@ -95,8 +95,8 @@ class TableDumperCollectionTest extends \PHPUnit_Framework_TestCase
 
     	$this->assertInstanceOf(TableDumper::class, $listTableDumpers['table1']);
     	$this->assertInstanceOf(TableDumper::class, $listTableDumpers['table2']);
-    	$this->assertEquals($listTableDumpers['table1']->getTable()->getName(), 'table1');
-    	$this->assertEquals($listTableDumpers['table2']->getTable()->getName(), 'table2');
+    	$this->assertEquals($listTableDumpers['table1']->getTable(), $inputList[0]);
+    	$this->assertEquals($listTableDumpers['table2']->getTable(), $inputList[1]);
     }
 
     public function testAddListTablesDumperArray()
