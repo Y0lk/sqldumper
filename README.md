@@ -78,11 +78,11 @@ WHERE query string as regular SQL
 
 ## Output
 
-### save(string $filename)
-Saves the dump to a file. This is what's needed in most cases
+### dump(resource $stream)
+This the main dump function, outputs the dump to a stream.
 
-### stdout()
-Outputs the dump to php://stdout. Useful for debugging.
+### save(string $filename)
+Saves the dump to a file
 
 ## License
 
