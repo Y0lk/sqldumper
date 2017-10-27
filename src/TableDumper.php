@@ -213,7 +213,14 @@ class TableDumper {
                 //Write start of INSERT statement
                 if ($j === 0) {
                     //Gets keys from array indexes of first row
-                    $fields = implode(',', array_keys($row));
+                    $listFields = array_keys($row);
+
+                    //Escape them
+                    foreach ($listFields as $key => $field) {
+                        $listFields[$key] = '`'.$field.'`';
+                    }
+
+                    $fields = implode(',', $listFields);
                     
                     fwrite($stream, 'INSERT INTO `'.$this->table->getName().'` ('.$fields.') VALUES ');
                 }
