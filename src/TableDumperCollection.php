@@ -112,7 +112,7 @@ class TableDumperCollection extends ArrayObject
     public function dumpDropStatements($stream): void
     {
         foreach ($this as $dumper) {
-            if($dumper->hasDrop()) {
+            if ($dumper->hasDrop()) {
                 $dumper->dumpDropStatement($stream);   
             }
         }
@@ -129,7 +129,7 @@ class TableDumperCollection extends ArrayObject
     public function dumpInsertStatements(PDO $db, $stream): void
     {
         foreach ($this as $dumper) {
-            if($dumper->hasData()) {
+            if ($dumper->hasData()) {
                 $dumper->dumpInsertStatement($db, $stream);
             }
         }
@@ -147,25 +147,25 @@ class TableDumperCollection extends ArrayObject
      */
     public function dump(PDO $db, $stream, bool $groupDrops = false, bool $groupInserts = false): void
     {   
-        if($groupDrops) {
+        if ($groupDrops) {
             $this->dumpDropStatements($stream);
         }
 
         foreach ($this as $dumper) {
-            if($dumper->hasDrop() && !$groupDrops) {
+            if ($dumper->hasDrop() && !$groupDrops) {
                 $dumper->dumpDropStatement($stream);
             }
 
-            if($dumper->hasStructure()) {
+            if ($dumper->hasStructure()) {
                 $dumper->dumpCreateStatement($db, $stream);
             }
 
-            if($dumper->hasData() && !$groupInserts) {
+            if ($dumper->hasData() && !$groupInserts) {
                 $dumper->dumpInsertStatement($db, $stream);
             }
         }
 
-        if($groupInserts) {
+        if ($groupInserts) {
             $this->dumpInsertStatements($db, $stream);
         }
     }
