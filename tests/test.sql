@@ -1,3 +1,6 @@
+DROP TABLE IF EXISTS `table1`;
+DROP TABLE IF EXISTS `table2`;
+
 CREATE TABLE `table1` (
   `id` int(10) UNSIGNED NOT NULL,
   `name` varchar(255) NOT NULL
@@ -12,3 +15,9 @@ ALTER TABLE `table1`
 
 ALTER TABLE `table1`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+
+CREATE TABLE `table2` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;

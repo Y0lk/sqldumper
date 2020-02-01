@@ -183,4 +183,46 @@ class TableDumperCollectionTest extends TestCase
     	$this->assertTrue($dumper1->hasStructure());
     	$this->assertTrue($dumper2->hasStructure());
     }
+
+    public function testDumpDropStatements()
+    {
+        $listTableDumpers = new TableDumperCollection([
+            new TableDumper(new Table('table1')),
+            new TableDumper(new Table('table2'))
+        ]);
+
+        $this->expectOutputRegex("/^DROP TABLE IF EXISTS `table1`;\s+DROP TABLE IF EXISTS `table2`;\s*$/");
+
+        $stream = fopen('php://output', 'w');
+        $listTableDumpers->dumpDropStatements($stream);
+        fclose($stream);
+    }
+
+    public function testDumpInsertStatements()
+    {
+        $listTableDumpers = new TableDumperCollection([
+            new TableDumper(new Table('table1')),
+            new TableDumper(new Table('table2'))
+        ]);
+
+        $this->expectOutputRegex("/^INSERT INTO `table1`(.+);\s*$/s");
+
+        $stream = fopen('php://output', 'w');
+        $listTableDumpers->dumpInsertStatements(SQLDumperTest::getDB(), $stream);
+        fclose($stream);
+    }
+
+    public function testDumpGrouped()
+    {
+        $listTableDumpers = new TableDumperCollection([
+            new TableDumper(new Table('table1')),
+            new TableDumper(new Table('table2'))
+        ]);
+
+        $this->expectOutputRegex("/^DROP TABLE IF EXISTS `table1`;\s+DROP TABLE IF EXISTS `table2`;\s+CREATE TABLE `table1`(.+);\s+CREATE TABLE `table2`(.+);\s+INSERT INTO `table1`(.+);\s*$/s");
+
+        $stream = fopen('php://output', 'w');
+        $listTableDumpers->dump(SQLDumperTest::getDB(), $stream, true, true);
+        fclose($stream);
+    }
 }

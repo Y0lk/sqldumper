@@ -116,7 +116,7 @@ class SQLDumperTest extends TestCase
     		->withData(false)
     		->withDrop(false);
 
-    	$this->expectOutputRegex("/SET FOREIGN_KEY_CHECKS=0;\s+SET FOREIGN_KEY_CHECKS=1;\s*/");
+    	$this->expectOutputRegex("/^SET FOREIGN_KEY_CHECKS=0;\s+SET FOREIGN_KEY_CHECKS=1;\s*$/");
 
     	$stream = fopen('php://output', 'w');
         $sqlDumper->dump($stream);
@@ -131,7 +131,7 @@ class SQLDumperTest extends TestCase
     		->withData(false)
     		->withDrop(false);
 
-    	$this->expectOutputRegex("/SET FOREIGN_KEY_CHECKS=0;\s+CREATE TABLE `table1`(.+);\s+SET FOREIGN_KEY_CHECKS=1;\s*/s");
+    	$this->expectOutputRegex("/^SET FOREIGN_KEY_CHECKS=0;\s+CREATE TABLE `table1`(.+);\s+SET FOREIGN_KEY_CHECKS=1;\s*$/s");
 
     	$stream = fopen('php://output', 'w');
         $sqlDumper->dump($stream);
@@ -146,7 +146,7 @@ class SQLDumperTest extends TestCase
     		->withData(true)
     		->withDrop(false);
 
-    	$this->expectOutputRegex("/SET FOREIGN_KEY_CHECKS=0;\s+INSERT INTO `table1`(.+);\s+SET FOREIGN_KEY_CHECKS=1;\s*/s");
+    	$this->expectOutputRegex("/^SET FOREIGN_KEY_CHECKS=0;\s+INSERT INTO `table1`(.+);\s+SET FOREIGN_KEY_CHECKS=1;\s*$/s");
 
     	$stream = fopen('php://output', 'w');
         $sqlDumper->dump($stream);
@@ -162,7 +162,7 @@ class SQLDumperTest extends TestCase
     		->withDrop(false)
     		->where('1=0'); //Since this is false, there should be no insert
 
-    	$this->expectOutputRegex("/SET FOREIGN_KEY_CHECKS=0;\s+SET FOREIGN_KEY_CHECKS=1;\s*/s");
+    	$this->expectOutputRegex("/^SET FOREIGN_KEY_CHECKS=0;\s+SET FOREIGN_KEY_CHECKS=1;\s*$/s");
 
     	$stream = fopen('php://output', 'w');
         $sqlDumper->dump($stream);
@@ -177,7 +177,7 @@ class SQLDumperTest extends TestCase
     		->withData(false)
     		->withDrop(true);
 
-    	$this->expectOutputRegex("/SET FOREIGN_KEY_CHECKS=0;\s+DROP TABLE IF EXISTS `table1`;\s+SET FOREIGN_KEY_CHECKS=1;\s*/");
+    	$this->expectOutputRegex("/^SET FOREIGN_KEY_CHECKS=0;\s+DROP TABLE IF EXISTS `table1`;\s+SET FOREIGN_KEY_CHECKS=1;\s*$/");
 
     	$stream = fopen('php://output', 'w');
         $sqlDumper->dump($stream);
@@ -189,7 +189,7 @@ class SQLDumperTest extends TestCase
     	$sqlDumper = self::getSQLDumper();
     	$sqlDumper->table('table1');
 
-    	$this->expectOutputRegex("/SET FOREIGN_KEY_CHECKS=0;\s+DROP TABLE IF EXISTS `table1`;\s+CREATE TABLE `table1`(.+);\s+INSERT INTO `table1`(.+);\s+SET FOREIGN_KEY_CHECKS=1;\s*/s");
+    	$this->expectOutputRegex("/^SET FOREIGN_KEY_CHECKS=0;\s+DROP TABLE IF EXISTS `table1`;\s+CREATE TABLE `table1`(.+);\s+INSERT INTO `table1`(.+);\s+SET FOREIGN_KEY_CHECKS=1;\s*$/s");
 
     	$stream = fopen('php://output', 'w');
         $sqlDumper->dump($stream);
@@ -207,9 +207,35 @@ class SQLDumperTest extends TestCase
 
     	//Get content of file
     	$content = file_get_contents('test.sql');
-    	$this->assertRegExp("/SET FOREIGN_KEY_CHECKS=0;\s+DROP TABLE IF EXISTS `table1`;\s+CREATE TABLE `table1`(.+);\s+INSERT INTO `table1`(.+);\s+SET FOREIGN_KEY_CHECKS=1;\s*/s", $content);
+    	$this->assertRegExp("/^SET FOREIGN_KEY_CHECKS=0;\s+DROP TABLE IF EXISTS `table1`;\s+CREATE TABLE `table1`(.+);\s+INSERT INTO `table1`(.+);\s+SET FOREIGN_KEY_CHECKS=1;\s*$/s", $content);
 
     	//Delete file
     	unlink('test.sql');
+    }
+
+    public function testGroupDrops()
+    {
+        $sqlDumper = self::getSQLDumper();
+        $sqlDumper->allTables();
+        $sqlDumper->groupDrops(true);
+
+        $this->expectOutputRegex("/^SET FOREIGN_KEY_CHECKS=0;\s+DROP TABLE IF EXISTS `table1`;\s+DROP TABLE IF EXISTS `table2`;\s+CREATE TABLE `table1`(.+);\s+INSERT INTO `table1`(.+);\s+CREATE TABLE `table2`(.+);\s+SET FOREIGN_KEY_CHECKS=1;\s*$/s");
+
+        $stream = fopen('php://output', 'w');
+        $sqlDumper->dump($stream);
+        fclose($stream);
+    }
+
+    public function testGroupInserts()
+    {
+        $sqlDumper = self::getSQLDumper();
+        $sqlDumper->allTables();
+        $sqlDumper->groupInserts(true);
+
+        $this->expectOutputRegex("/^SET FOREIGN_KEY_CHECKS=0;\s+DROP TABLE IF EXISTS `table1`;\s+CREATE TABLE `table1`(.+);\s+DROP TABLE IF EXISTS `table2`;\s+CREATE TABLE `table2`(.+);\s+INSERT INTO `table1`(.+);\s+SET FOREIGN_KEY_CHECKS=1;\s*$/s");
+
+        $stream = fopen('php://output', 'w');
+        $sqlDumper->dump($stream);
+        fclose($stream);
     }
 }

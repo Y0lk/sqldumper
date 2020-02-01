@@ -77,4 +77,15 @@ class TableDumperTest extends TestCase
         $this->assertSame($return, $dumper);
     	$this->assertEquals('test="foo" AND test2="bar"', $dumper->getWhere());
     }
+
+    public function testDump()
+    {
+        $dumper = new TableDumper(new Table('table1'));
+
+        $this->expectOutputRegex("/^DROP TABLE IF EXISTS `table1`;\s+CREATE TABLE `table1`(.+);\s+INSERT INTO `table1`(.+);\s*$/s");
+
+        $stream = fopen('php://output', 'w');
+        $dumper->dump(SQLDumperTest::getDB(), $stream);
+        fclose($stream);
+    }
 }
