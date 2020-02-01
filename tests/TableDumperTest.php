@@ -1,10 +1,11 @@
 <?php
 namespace Y0lk\SQLDumper\Test;
 
+use PHPUnit\Framework\TestCase;
 use Y0lk\SQLDumper\Table;
 use Y0lk\SQLDumper\TableDumper;
 
-class TableDumperTest extends \PHPUnit_Framework_TestCase
+class TableDumperTest extends TestCase
 {
 	public function testGetTable()
 	{

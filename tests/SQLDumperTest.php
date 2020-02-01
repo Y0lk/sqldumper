@@ -1,6 +1,7 @@
 <?php
 namespace Y0lk\SQLDumper\Test;
 
+use PHPUnit\Framework\TestCase;
 use Y0lk\SQLDumper\SQLDumper;
 use Y0lk\SQLDumper\Table;
 use Y0lk\SQLDumper\TableDumper;
@@ -8,7 +9,7 @@ use Y0lk\SQLDumper\TableDumperCollection;
 
 use PDO;
 
-class SQLDumperTest extends \PHPUnit_Framework_TestCase
+class SQLDumperTest extends TestCase
 {
 	protected static $host = 'localhost';
 	protected static $dbname = 'test';

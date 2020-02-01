@@ -1,9 +1,10 @@
 <?php
 namespace Y0lk\SQLDumper\Test;
 
+use PHPUnit\Framework\TestCase;
 use Y0lk\SQLDumper\Table;
 
-class TableTest extends \PHPUnit_Framework_TestCase
+class TableTest extends TestCase
 {
     public function testTableName() 
     {

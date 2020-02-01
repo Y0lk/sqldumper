@@ -1,11 +1,13 @@
 <?php
 namespace Y0lk\SQLDumper\Test;
 
+use PHPUnit\Framework\TestCase;
 use Y0lk\SQLDumper\Table;
 use Y0lk\SQLDumper\TableDumper;
 use Y0lk\SQLDumper\TableDumperCollection;
+use InvalidArgumentException;
 
-class TableDumperCollectionTest extends \PHPUnit_Framework_TestCase
+class TableDumperCollectionTest extends TestCase
 {
     public function testAddValue()
     {
@@ -20,7 +22,8 @@ class TableDumperCollectionTest extends \PHPUnit_Framework_TestCase
 
     public function testAddWrongValue()
     {
-    	$this->setExpectedException('Exception', 'TableDumperCollection only accepts TableDumper objects');
+    	$this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('TableDumperCollection only accepts TableDumper objects');
 
     	$listTableDumpers = new TableDumperCollection;
     	$listTableDumpers[] = 'test';
@@ -39,7 +42,8 @@ class TableDumperCollectionTest extends \PHPUnit_Framework_TestCase
 
     public function testAppendWrongValue()
     {
-    	$this->setExpectedException('Exception', 'TableDumperCollection only accepts TableDumper objects');
+    	$this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('TableDumperCollection only accepts TableDumper objects');
 
     	$listTableDumpers = new TableDumperCollection;
     	$listTableDumpers->append('test');
@@ -67,7 +71,8 @@ class TableDumperCollectionTest extends \PHPUnit_Framework_TestCase
 
     public function testAddTableWrongValue()
     {
-    	$this->setExpectedException('Exception', 'Invalid value supplied for argument \'table\'');
+    	$this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid value supplied for argument \'table\'');
 
     	$listTableDumpers = new TableDumperCollection;
     	$listTableDumpers->addTable(42);
@@ -149,7 +154,8 @@ class TableDumperCollectionTest extends \PHPUnit_Framework_TestCase
 
     public function testAddListTablesWrongValue()
     {
-    	$this->setExpectedException('Exception', 'Invalid value supplied for argument \'listTables\'');
+    	$this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid value supplied for argument \'listTables\'');
 
     	$listTableDumpers = new TableDumperCollection;
     	$listTableDumpers->addListTables('garbage');

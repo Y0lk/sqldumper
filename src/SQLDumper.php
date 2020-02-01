@@ -40,6 +40,16 @@ class SQLDumper
      */
     protected $listTableDumpers;
 
+    /**
+     * @var boolean Determines if DROP statements should be grouped together
+     */
+    protected $groupDrops = false;
+
+    /**
+     * @var boolean Determines if INSERT statements should be grouped together
+     */
+    protected $groupInserts = false;
+
 
     /**
      * @param string    Host for the DB connection
@@ -47,7 +57,7 @@ class SQLDumper
      * @param string    Username used for the DB connection
      * @param string    Password used for the DB connection
      */
-    public function __construct($host, $dbname, $username, $password = '') 
+    public function __construct(string $host, string $dbname, string $username, string $password = '') 
     {
         $this->host = $host;
         $this->dbname = $dbname;
@@ -64,7 +74,7 @@ class SQLDumper
      * 
      * @return void
      */
-    protected function connect() 
+    protected function connect(): void
     {
         $this->db = new PDO('mysql:host='.$this->host.';dbname='.$this->dbname, 
                             $this->username, 
@@ -80,7 +90,7 @@ class SQLDumper
      * 
      * @return TableDumperCollection Returns the list of table dumpers as TableDumperCollection
      */
-    public function getListTableDumpers()
+    public function getListTableDumpers(): TableDumperCollection
     {
         return $this->listTableDumpers;
     }
@@ -92,7 +102,7 @@ class SQLDumper
      * 
      * @return TableDumper  Returns a TableDumper
      */
-    public function table($table)
+    public function table($table): TableDumper
     {
         return $this->listTableDumpers->addTable($table);
     }
@@ -104,7 +114,7 @@ class SQLDumper
      * 
      * @return TableDumperCollection    Returns a TableDumperCollection
      */
-    public function listTables($listTables)
+    public function listTables($listTables): TableDumperCollection
     {   
         return $this->listTableDumpers->addListTables($listTables);
     }
@@ -114,7 +124,7 @@ class SQLDumper
      * 
      * @return TableDumperCollection    Returns a TableDumperCollection
      */
-    public function allTables()
+    public function allTables(): TableDumperCollection
     {
         //Fetch all table names
         $stmt = $this->db->prepare('SELECT table_name FROM information_schema.tables WHERE table_schema=:dbname');
@@ -137,14 +147,12 @@ class SQLDumper
      * 
      * @return void
      */
-    public function dump($stream)
+    public function dump($stream): void
     {
         //TODO: Find a way to not use that an instead execute all foreign key constraints at the end
         fwrite($stream, "SET FOREIGN_KEY_CHECKS=0;\r\n");
 
-        foreach ($this->listTableDumpers as $tableDumper) {
-            $tableDumper->dump($this->db, $stream);
-        }
+        $this->listTableDumpers->dump($this->db, $stream, $this->groupDrops, $this->groupInserts);
 
         fwrite($stream, "SET FOREIGN_KEY_CHECKS=1;\r\n");
     }
@@ -156,10 +164,34 @@ class SQLDumper
      * 
      * @return void
      */
-    public function save($filename) 
+    public function save(string $filename): void
     {
         $stream = fopen($filename, 'w');
+
+        //BOM
+        fwrite($stream, "\xEF\xBB\xBF");
+        
         $this->dump($stream);
         fclose($stream);
+    }
+
+    /**
+     * Set parameter that determines if DROP statements should be grouped together
+     * @param  bool   $group Set to TRUE if it should be grouped, FALSE otherwise
+     * @return void
+     */
+    public function groupDrops(bool $group): void
+    {
+        $this->groupDrops = $group;
+    }
+
+    /**
+     * Set parameter that determines if INSERT statements should be grouped together
+     * @param  bool   $group Set to TRUE if it should be grouped, FALSE otherwise
+     * @return void
+     */
+    public function groupInserts(bool $group): void
+    {
+        $this->groupInserts = $group;
     }
 }

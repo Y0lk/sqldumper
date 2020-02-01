@@ -51,7 +51,7 @@ class TableDumper {
      * 
      * @return TableDumper  Returns the TableDumper instance
      */
-    public function withStructure($withStructure = true)
+    public function withStructure(bool $withStructure = true): TableDumper
     {
         $this->withStructure = $withStructure;
         return $this;
@@ -64,7 +64,7 @@ class TableDumper {
      * 
      * @return TableDumper  Returns the TableDumper instance
      */
-    public function withData($withData = true)
+    public function withData(bool $withData = true): TableDumper
     {
         $this->withData = $withData;
         return $this;
@@ -77,7 +77,7 @@ class TableDumper {
      * 
      * @return TableDumper  Returns the TableDumper instance
      */
-    public function withDrop($withDrop = true)
+    public function withDrop(bool $withDrop = true): TableDumper
     {
         $this->withDrop = $withDrop;
         return $this;
@@ -88,7 +88,7 @@ class TableDumper {
      * 
      * @return boolean Returns TRUE if it includes it, FALSE otherwise
      */
-    public function hasStructure()
+    public function hasStructure(): bool
     {
         return $this->withStructure;
     }
@@ -99,7 +99,7 @@ class TableDumper {
      * 
      * @return boolean Returns TRUE if it includes it, FALSE otherwise
      */
-    public function hasData()
+    public function hasData(): bool
     {
         return $this->withData;
     }
@@ -110,7 +110,7 @@ class TableDumper {
      * 
      * @return boolean Returns TRUE if it includes it, FALSE otherwise
      */
-    public function hasDrop()
+    public function hasDrop(): bool
     {
         return $this->withDrop;
     }
@@ -123,7 +123,7 @@ class TableDumper {
      * 
      * @return TableDumper  Returns the TableDumper instance
      */
-    public function where($where_string)
+    public function where(string $where_string): TableDumper
     {
         $this->where = $where_string;
         return $this;
@@ -133,7 +133,7 @@ class TableDumper {
      * Get the where param string
      * @return string Returns the WHERE param string
      */
-    public function getWhere()
+    public function getWhere(): string
     {
         return $this->where;
     }
@@ -143,7 +143,7 @@ class TableDumper {
      * 
      * @return Table    Returns the Table instance
      */
-    public function getTable()
+    public function getTable(): Table
     {
         return $this->table;
     }
@@ -156,7 +156,7 @@ class TableDumper {
      * 
      * @return void
      */
-    protected function dumpCreateStatement(PDO $db, $stream) 
+    public function dumpCreateStatement(PDO $db, $stream): void 
     {
         $stmt = $db->query('SHOW CREATE TABLE `'.$this->table->getName().'`');
 
@@ -166,26 +166,26 @@ class TableDumper {
     }
 
     /**
-     * Writes the DROP statement to the drump stream
+     * Writes the DROP statement to the dump stream
      * 
      * @param  resource $stream Stream to write the dump to
      * 
      * @return void
      */
-    protected function dumpDropStatement($stream)
+    public function dumpDropStatement($stream): void
     {
         fwrite($stream, 'DROP TABLE IF EXISTS `'.$this->table->getName()."`;\r\n");
     }
 
     /**
-     * Writes the INSERT statements to the drump stream
+     * Writes the INSERT statements to the dump stream
      * 
      * @param  PDO      $db     PDO instance to use for DB queries
      * @param  resource $stream Stream to write the dump to
      * 
      * @return void
      */
-    protected function dumpInsertStatement(PDO $db, $stream)
+    public function dumpInsertStatement(PDO $db, $stream): void
     {
         //Get data from table
         $select = 'SELECT * FROM '.$this->table->getName();
@@ -266,7 +266,7 @@ class TableDumper {
      * 
      * @return void
      */
-    public function dump(PDO $db, $stream)
+    public function dump(PDO $db, $stream): void
     {
         //Drop table statement
         if ($this->withDrop) {
