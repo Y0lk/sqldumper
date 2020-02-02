@@ -51,7 +51,7 @@ class TableDataDumper {
 
         $stmt = $db->prepare($select);
 
-        if(!($stmt instanceof PDOStatement)) {
+        if (!($stmt instanceof PDOStatement)) {
             throw new RuntimeException("Error occured preparing SELECT statement");
         }
 

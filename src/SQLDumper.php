@@ -170,7 +170,7 @@ class SQLDumper
     {
         $stream = @fopen($filename, 'w');
 
-        if($stream === false) {
+        if ($stream === false) {
             throw new RuntimeException("Could not read provided file");
         }
         
