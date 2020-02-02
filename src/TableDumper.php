@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 namespace Y0lk\SQLDumper;
 
 use PDO;
@@ -158,6 +158,8 @@ class TableDumper {
      */
     public function dumpCreateStatement(PDO $db, $stream): void 
     {
+        if(!$this->hasStructure()) return;
+
         $stmt = $db->query('SHOW CREATE TABLE `'.$this->table->getName().'`');
 
         fwrite($stream, $stmt->fetchColumn(1).";\r\n");
@@ -174,6 +176,8 @@ class TableDumper {
      */
     public function dumpDropStatement($stream): void
     {
+        if(!$this->hasDrop()) return;
+
         fwrite($stream, 'DROP TABLE IF EXISTS `'.$this->table->getName()."`;\r\n");
     }
 
@@ -187,75 +191,10 @@ class TableDumper {
      */
     public function dumpInsertStatement(PDO $db, $stream): void
     {
-        //Get data from table
-        $select = 'SELECT * FROM '.$this->table->getName();
+        if(!$this->hasData()) return;
 
-        if (!empty($this->where)) {
-            $select .= ' WHERE '.$this->where;
-        }
-
-        //Add limit
-        $limit = 1000;
-        $select .= ' LIMIT :limit OFFSET :offset';
-
-        $stmt = $db->prepare($select);
-        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-
-        $i = 0;
-        $j = 0;
-
-        //Dump an INSERT of all rows with paging 
-        do {    
-            $stmt->bindValue(':offset', $i*$limit, PDO::PARAM_INT);
-            $stmt->execute();
-
-            while (($row = $stmt->fetch(PDO::FETCH_ASSOC)) !== false) {
-                //Write start of INSERT statement
-                if ($j === 0) {
-                    //Gets keys from array indexes of first row
-                    $listFields = array_keys($row);
-
-                    //Escape them
-                    foreach ($listFields as $key => $field) {
-                        $listFields[$key] = '`'.$field.'`';
-                    }
-
-                    $fields = implode(',', $listFields);
-                    
-                    fwrite($stream, 'INSERT INTO `'.$this->table->getName().'` ('.$fields.') VALUES ');
-                }
-
-                //Write values of this row
-                $valuesDump = '';
-
-                if ($j > 0) {
-                    $valuesDump .= ", \r\n";
-                }
-
-                $listValues = array_values($row);
-
-                //Quote values or replace with NULL if null
-                foreach ($listValues as $key => $value) {
-                    $quotedValue = str_replace("'", "\'", str_replace('"', '\"', $value));
-                    $listValues[$key] = (!isset($value) ? 'NULL' : "'".$quotedValue."'");
-                }
-
-                //Add values from this row to valuesDump
-                $valuesDump .= '('.implode(',', $listValues).')';
-
-                fwrite($stream, $valuesDump);
-                $j++;
-            }
-
-            $stmt->closeCursor();
-            $i++;
-
-        } while ($j === $i*$limit);
-
-        //If there was at least one row, write end of INSERT statement
-        if ($j > 0) {
-            fwrite($stream, ";\r\n");
-        }
+        $dataDumper = new TableDataDumper($this);
+        $dataDumper->dump($db, $stream);
     }
 
     /**
@@ -269,18 +208,12 @@ class TableDumper {
     public function dump(PDO $db, $stream): void
     {
         //Drop table statement
-        if ($this->withDrop) {
-            $this->dumpDropStatement($stream);
-        }
+        $this->dumpDropStatement($stream);
 
         //Create table statement
-        if ($this->withStructure) {
-            $this->dumpCreateStatement($db, $stream);
-        }
+        $this->dumpCreateStatement($db, $stream);
 
         //Data
-        if ($this->withData) {
-            $this->dumpInsertStatement($db, $stream);
-        }
+        $this->dumpInsertStatement($db, $stream);
     }
 }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 namespace Y0lk\SQLDumper;
 
 use ArrayObject;
@@ -83,23 +83,34 @@ class TableDumperCollection extends ArrayObject
 
             return $listTables;
         } elseif (is_array($listTables)) {
-            //Create TableDumperCollection 
-            $listDumpers = new TableDumperCollection;
-
-            foreach ($listTables as $table) {
-                //If table is already a Dumper, simply append to this
-                if ($table instanceof TableDumper) {
-                    $listDumpers[] = $table;
-                    $this->append($table);
-                } else {
-                    $listDumpers[] = $this->addTable($table);
-                }
-            }
-
-            return $listDumpers;
+            return $this->addListTableArray($listTables);
         }
 
         throw new \InvalidArgumentException("Invalid value supplied for argument 'listTables'", 1);
+    }
+
+    /**
+     * Adds a list of tables passed as an array
+     * @param array $listTables Array of tables to add
+     *
+     * @return TableDumperCollection Returns a TableDumperCollection of the list of tables that was just added
+     */
+    protected function addListTableArray(array $listTables): TableDumperCollection
+    {
+        //Create TableDumperCollection 
+        $listDumpers = new TableDumperCollection;
+
+        foreach ($listTables as $table) {
+            //If table is already a Dumper, simply append to this
+            if ($table instanceof TableDumper) {
+                $listDumpers[] = $table;
+                $this->append($table);
+            } else {
+                $listDumpers[] = $this->addTable($table);
+            }
+        }
+
+        return $listDumpers;
     }
 
     /**
@@ -152,15 +163,13 @@ class TableDumperCollection extends ArrayObject
         }
 
         foreach ($this as $dumper) {
-            if ($dumper->hasDrop() && !$groupDrops) {
+            if (!$groupDrops) {
                 $dumper->dumpDropStatement($stream);
             }
 
-            if ($dumper->hasStructure()) {
-                $dumper->dumpCreateStatement($db, $stream);
-            }
+            $dumper->dumpCreateStatement($db, $stream);
 
-            if ($dumper->hasData() && !$groupInserts) {
+            if (!$groupInserts) {
                 $dumper->dumpInsertStatement($db, $stream);
             }
         }

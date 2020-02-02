@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 namespace Y0lk\SQLDumper\Test;
 
 use PHPUnit\Framework\TestCase;
