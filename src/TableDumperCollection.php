@@ -80,11 +80,9 @@ class TableDumperCollection extends ArrayObject
             }
 
             return $listTables;
-        } elseif (is_array($listTables)) {
+        } else {
             return $this->addListTableArray($listTables);
         }
-
-        throw new \InvalidArgumentException("Invalid value supplied for argument 'listTables'", 1);
     }
 
     /**
