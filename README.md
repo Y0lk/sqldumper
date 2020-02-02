@@ -44,11 +44,27 @@ $dumper->listTables([
 	->table('table3')
 		->where('id=2 OR foo="bar"');
 
+//This will group DROP statements and put them at the beginning of the dump
+$dumper->groupDrops(true);
+
+//This will group INSERT statements and put them at the end of the dump
+$dumper->groupInserts(true);
+
 $dumper->save('dump.sql');
 ```
 
+
+## Dumper options
+
+### groupDrops(bool $group)
+When set to TRUE, this will group DROP statements and put them at the beginning of the dump
+
+### groupInserts(bool $group)
+When set to TRUE, this will group INSERT statements and put them at the end of the dump
+
 ## Table selection
 There are 3 basic methods to select tables. When a table or a list of tables are selected, they are returned as TableDumper objects on which you can set options for the dump.
+
 
 ### allTables()
 Selects all the tables in the DB
