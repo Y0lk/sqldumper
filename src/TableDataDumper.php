@@ -141,7 +141,7 @@ class TableDataDumper {
 
         //Dump an INSERT of all rows with paging 
         do {
-            $rowIndex = $this->processChunk($stmt, $stream, $chunkIndex, $rowIndex);
+            $rowIndex = $this->processChunk($stmt, $stream, $chunkIndex);
             $chunkIndex++;
         } while ($rowIndex === $chunkIndex*self::CHUNK_SIZE);
 
