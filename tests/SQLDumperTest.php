@@ -8,6 +8,7 @@ use Y0lk\SQLDumper\TableDumper;
 use Y0lk\SQLDumper\TableDumperCollection;
 
 use PDO;
+use RuntimeException;
 
 class SQLDumperTest extends TestCase
 {
@@ -211,6 +212,16 @@ class SQLDumperTest extends TestCase
 
     	//Delete file
     	unlink('test.sql');
+    }
+
+    public function testSaveException()
+    {
+        $sqlDumper = self::getSQLDumper();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Could not read provided file');
+
+        $sqlDumper->save('');
     }
 
     public function testGroupDrops()

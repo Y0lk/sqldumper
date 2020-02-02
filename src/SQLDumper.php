@@ -2,6 +2,7 @@
 namespace Y0lk\SQLDumper;
 
 use PDO;
+use RuntimeException;
 
 /**
  * SQLDumper is used to create a complete dump from a SQL database
@@ -52,10 +53,10 @@ class SQLDumper
 
 
     /**
-     * @param string    Host for the DB connection
-     * @param string    Name of the DB
-     * @param string    Username used for the DB connection
-     * @param string    Password used for the DB connection
+     * @param string $host     Host for the DB connection
+     * @param string $dbname   Name of the DB
+     * @param string $username Username used for the DB connection
+     * @param string $password Password used for the DB connection
      */
     public function __construct(string $host, string $dbname, string $username, string $password = '') 
     {
@@ -99,7 +100,7 @@ class SQLDumper
     /**
      * Set a TableDumper for the given table in order to specify certain dump options on it
      * 
-     * @param  Table|string The table to set
+     * @param  Table|string $table  The table to set
      * 
      * @return TableDumper  Returns a TableDumper
      */
@@ -111,7 +112,7 @@ class SQLDumper
     /**
      * Set a TableDumperCollection for the given list of tables in order to specify certain dump options on them
      * 
-     * @param  TableDumperCollection|array<TableDumper|Table|string>    The list of tables to set (either as a TableDumperCollection, or an array containing either TableDumper objects, Table objects or table names) 
+     * @param  TableDumperCollection|array<TableDumper|Table|string> $listTables    The list of tables to set (either as a TableDumperCollection, or an array containing either TableDumper objects, Table objects or table names) 
      * 
      * @return TableDumperCollection    Returns a TableDumperCollection
      */
@@ -144,7 +145,7 @@ class SQLDumper
     /**
      * Writes the complete dump of the database to the given stream
      * 
-     * @param  resource Stream to write to
+     * @param  resource $stream Stream to write to
      * 
      * @return void
      */
@@ -161,13 +162,17 @@ class SQLDumper
     /**
      * Creates and saves the dump to a file
      * 
-     * @param  string   File name for the dump
+     * @param  string   $filename   File name for the dump
      * 
      * @return void
      */
     public function save(string $filename): void
     {
-        $stream = fopen($filename, 'w');
+        $stream = @fopen($filename, 'w');
+
+        if(!$stream) {
+            throw new RuntimeException("Could not read provided file");
+        }
         
         $this->dump($stream);
         fclose($stream);

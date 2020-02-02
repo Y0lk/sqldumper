@@ -16,7 +16,7 @@ class TableDumperCollection extends ArrayObject
     /**
      * {@inheritDoc}
      */
-    public function append($value)
+    public function append($value): void
     {
         //Make sure we're adding a TableDumper object
         if (!($value instanceof TableDumper)) {
@@ -24,13 +24,13 @@ class TableDumperCollection extends ArrayObject
         }
 
         //Append with table_name as key
-        return $this->offsetSet($value->getTable()->getName(), $value);
+        $this->offsetSet($value->getTable()->getName(), $value);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function offsetSet($index, $newval)
+    public function offsetSet($index, $newval): void
     {
         //Make sure we're adding a TableDumper object
         if (!($newval instanceof TableDumper)) {
@@ -38,14 +38,14 @@ class TableDumperCollection extends ArrayObject
         }
 
         //Append with table_name as key
-        return parent::offsetSet($newval->getTable()->getName(), $newval);
+        parent::offsetSet($newval->getTable()->getName(), $newval);
     }
 
 
     /**
-     * @param Table|string  Adds a table, either by name, or by Table instance, to the collection
+     * @param Table|string  $table  Adds a table, either by name, or by Table instance, to the collection
      *
-     * @return TableDumper Retruns a TableDumper of the table that was just added
+     * @return TableDumper Returns a TableDumper of the table that was just added
      */
     public function addTable($table): TableDumper
     {  

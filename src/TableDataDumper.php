@@ -3,6 +3,8 @@ namespace Y0lk\SQLDumper;
 
 use PDO;
 use PDOStatement;
+use RuntimeException;
+use PDOException;
 
 /**
  * A TableDumper instance is used to dump data of single Table
@@ -38,7 +40,9 @@ class TableDataDumper {
         //Get data from table
         $select = 'SELECT * FROM '.$this->tableDumper->getTable()->getName();
 
-        if (!empty($this->tableDumper->getWhere())) {
+        $where = $this->tableDumper->getWhere();
+
+        if (!empty($where)) {
             $select .= ' WHERE '.$this->tableDumper->getWhere();
         }
 
@@ -46,6 +50,11 @@ class TableDataDumper {
         $select .= ' LIMIT :limit OFFSET :offset';
 
         $stmt = $db->prepare($select);
+
+        if(!$stmt) {
+            throw new RuntimeException("Error occured preparing SELECT statement");
+        }
+
         $stmt->bindValue(':limit', self::CHUNK_SIZE, PDO::PARAM_INT);
 
         return $stmt;
@@ -137,7 +146,6 @@ class TableDataDumper {
         $stmt = $this->prepareSelect($db);
 
         $chunkIndex = 0;
-        $rowIndex = 0;
 
         //Dump an INSERT of all rows with paging 
         do {

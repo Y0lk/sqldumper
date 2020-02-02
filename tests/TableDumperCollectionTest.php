@@ -225,4 +225,18 @@ class TableDumperCollectionTest extends TestCase
         $listTableDumpers->dump(SQLDumperTest::getDB(), $stream, true, true);
         fclose($stream);
     }
+
+    public function testDumpUngrouped()
+    {
+        $listTableDumpers = new TableDumperCollection([
+            new TableDumper(new Table('table1')),
+            new TableDumper(new Table('table2'))
+        ]);
+
+        $this->expectOutputRegex("/^DROP TABLE IF EXISTS `table1`;\s+CREATE TABLE `table1`(.+);\s+INSERT INTO `table1`(.+);\s+DROP TABLE IF EXISTS `table2`;\s+CREATE TABLE `table2`(.+);\s*$/s");
+
+        $stream = fopen('php://output', 'w');
+        $listTableDumpers->dump(SQLDumperTest::getDB(), $stream, false, false);
+        fclose($stream);
+    }
 }
