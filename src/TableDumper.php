@@ -158,7 +158,7 @@ class TableDumper {
      */
     public function dumpCreateStatement(PDO $db, $stream): void 
     {
-        if(!$this->hasStructure()) return;
+        if (!$this->hasStructure()) return;
 
         $stmt = $db->query('SHOW CREATE TABLE `'.$this->table->getName().'`');
 
@@ -176,7 +176,7 @@ class TableDumper {
      */
     public function dumpDropStatement($stream): void
     {
-        if(!$this->hasDrop()) return;
+        if (!$this->hasDrop()) return;
 
         fwrite($stream, 'DROP TABLE IF EXISTS `'.$this->table->getName()."`;\r\n");
     }
@@ -191,7 +191,7 @@ class TableDumper {
      */
     public function dumpInsertStatement(PDO $db, $stream): void
     {
-        if(!$this->hasData()) return;
+        if (!$this->hasData()) return;
 
         $dataDumper = new TableDataDumper($this);
         $dataDumper->dump($db, $stream);
