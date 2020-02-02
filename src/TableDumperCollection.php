@@ -51,11 +51,9 @@ class TableDumperCollection extends ArrayObject
     {  
         if ($table instanceof Table) {
             $tableName = $table->getName();
-        } elseif (is_string($table)) {
+        } else {
             $tableName = $table;
             $table = new Table($tableName);
-        } else {
-            throw new InvalidArgumentException("Invalid value supplied for argument 'table'", 1);
         }
 
         //First check if a dumper already exists for this table
@@ -69,7 +67,7 @@ class TableDumperCollection extends ArrayObject
 
 
     /**
-     * @param TableDumperCollection|array<TableDumper|Table|string>    Adds a list of tables, either by passing TableDumperCollection, or an array containing either TableDumper objects, Table objects or table naes
+     * @param TableDumperCollection|array<TableDumper|Table|string> $listTables Adds a list of tables, either by passing TableDumperCollection, or an array containing either TableDumper objects, Table objects or table naes
      *
      * @return TableDumperCollection Returns a TableDumperCollection of the list of tables that was just added
      */

@@ -69,15 +69,6 @@ class TableDumperCollectionTest extends TestCase
     	$this->assertSame($listTableDumpers['table_name']->getTable(), $table);
     }
 
-    public function testAddTableWrongValue()
-    {
-    	$this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid value supplied for argument \'table\'');
-
-    	$listTableDumpers = new TableDumperCollection;
-    	$listTableDumpers->addTable(42);
-    }
-
     public function testAddListTablesString()
     {
     	$inputList = ['table1','table2'];
