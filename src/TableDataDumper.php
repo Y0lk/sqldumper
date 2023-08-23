@@ -123,7 +123,7 @@ class TableDataDumper {
 
         //Quote values or replace with NULL if null
         foreach ($listValues as $key => $value) {
-            $quotedValue = str_replace("'", "\'", str_replace('"', '\"', $value));
+            $quotedValue = str_replace("'", "\'", str_replace('"', '\"', (string) $value));
             $listValues[$key] = (!isset($value) ? 'NULL' : "'".$quotedValue."'");
         }
 
